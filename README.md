@@ -11,4 +11,4 @@ This is the (new) archiving logic for the main HTTP Archive instance that:
 It is comprised of several php scripts that get scheduled in cron and run concurrently (serialized operation can not keep up with the testing).
 
 
-The code expects to be in a directory within the main WebPageTest directory of the HTTP Archive instance and all account information is configured in a settings.inc.php file (based on the included settings.inc.php.sample).
+The code expects to be in a directory parallel to the main WebPageTest directory of the HTTP Archive instance and all account information is configured in a settings.inc.php file (based on the included settings.inc.php.sample).
