@@ -1,0 +1,23 @@
+<?php
+// Path to the local WebPageTest install
+$wpt_dir = '/var/www/webpagetest/';
+
+// Base name to use for bucket identifiers
+$bucket_base = 'httparchive_20';
+
+// Root download path for the bucket
+$download_path = "http://www.archive.org/download/";
+
+// Headers to use for uploading to S3-like storage
+$archive_headers = array('x-amz-auto-make-bucket: 1',
+                         'x-archive-queue-derive: 0',
+                         'x-archive-meta-collection: httparchive',
+                         'authorization: LOW S3AuthorizationHash');
+
+// Database information for the status of crawls
+$gMysqlServer = "localhost";
+$gMysqlDb = "httparchive";
+$gMysqlUsername = "mysqlusername";
+$gMysqlPassword = "mysqlpassword";
+$statusTables = array("statusdev", "statusmobile");
+?>
