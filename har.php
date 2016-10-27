@@ -3,7 +3,7 @@ include './archive_common.php.inc';
 require_once('har.inc.php');
 
 // Allow for multiple concurrent scans to run
-$max_concurrent = 1;
+$max_concurrent = 2;
 $client_id = null;
 $client_lock = null;
 for ($client = 1; $client <= $max_concurrent && !isset($client_lock); $client++) {
@@ -19,10 +19,10 @@ if (!isset($client_lock)) {
   exit(0);
 }
 $lock = $client_lock;
-$logFile = __DIR__ + "/har_{$client_id}.log";
+$logFile = __DIR__ . "/har_{$client_id}.log";
 if (is_file($logFile))
   unlink($logFile);
-logMessage("Starting processing as client $client_id");
+logMessage("Starting processing as client $client_id, logging to $logFile");
 
 $now = time();
 
@@ -216,7 +216,7 @@ function CollectTraces($tests, $outDir) {
         $count++;
         $found = true;
         $src = "$testPath/$file";
-        $dst = "$outDir/$id." . substr($file, 0, $pos) . '.json.gz';
+        $dst = "$outDir/$id.json.gz";
         copy($src, $dst);
       }
     }
@@ -247,13 +247,5 @@ function gsMarkDone($crawlName) {
   if ($result == 0)
     $ret = true;
   return $ret;
-}
-
-function logMessage($msg) {
-  global $logFile;
-  $out = gmdate('Y/m/d H:i:s - ') . $msg . "\n";
-  echo $out;
-  if (isset($logFile))
-    error_log($out, 3, $logFile);
 }
 ?>
