@@ -8,6 +8,7 @@ if (!isset($wpt_dir)) {
 chdir($wpt_dir);
 $debug = true;
 include 'common.inc';
+error_reporting(E_ALL & ~E_NOTICE);
 set_time_limit(86000);
 
 $script = basename($_SERVER['PHP_SELF'], '.php');
@@ -185,7 +186,7 @@ function ZipDirectory($dir, $zipFile, $store_only = false) {
   if (is_dir($dir)) {
     $cwd = getcwd();
     chdir($dir);
-    $options = $store_only ? '-rDmj' : '-r7';
+    $options = $store_only ? '-r0' : '-r7';
     exec("zip $options \"$zipFile\" *");
     chdir($cwd);
   }
