@@ -171,26 +171,25 @@ function CollectHARs($tests, $outDir) {
   $index = 0;
   foreach($tests as $id) {
     $index++;
-    logMessage("Collecting HAR $index of $total ($id)...");
+    logMessage("[$index/$total] Collecting HAR ($id)...");
     $testPath = './' . GetTestPath($id);
     $har = GenerateHAR($id, $testPath, ['bodies' => 1, 'run' => 'median', 'cached' => 0]);
     if (isset($har) && strlen($har) > 10) {
       $harFile = "$outDir/$id.har";
       file_put_contents($harFile, $har);
-      logMessage("Compressing $harFile");
+      $size = filesize($harFile);
+      logMessage("[$index/$total] Compressing $harFile ($size bytes)");
       exec("gzip -7 \"$harFile\"");
-      if (is_file($harFile)) {
-        unlink($harFile);
-      }
       $harFile .= '.gz';
       if (is_file($harFile)) {
-        logMessage("Validating $harFile");
+        $size = filesize($harFile);
+        logMessage("[$index/$total] Validating $harFile ($size bytes)");
         exec("gzip -t \"$harFile\"", $out, $return);
         if (!$return) {
           $count++;
         } else {
           logMessage("Invalid gzip file: $return");
-          unlink($harFile);
+          @unlink($harFile);
         }
       }
     }

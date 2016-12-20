@@ -37,7 +37,7 @@ archive_scan_dirs(function ($info) {
   
   $dir_lock = Lock("archive-$id", false, 86400);
   if (isset($dir_lock)) {
-    if (is_file("$dir/testing.complete")) {
+    if (is_file("$dir/testing.complete") && is_file("$dir/har.complete")) {
       $suffix = '';
 
       // Re-archive anything that was archived > 30 days ago but still hasn't shown up as a valid archive
