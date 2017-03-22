@@ -40,7 +40,7 @@ archive_scan_dirs(function ($info) {
     if (is_file("$dir/testing.complete") && is_file("$dir/har.complete")) {
       $suffix = '';
 
-      // Re-archive anything that was archived > 30 days ago but still hasn't shown up as a valid archive
+      // Re-archive anything that was archived > 2 days ago but still hasn't shown up as a valid archive
       if (is_file("$dir/archive.dat") && !ArchiveExists("$dir/archive.dat")) {
         $modified = filemtime("$dir/archive.dat");
         if ($modified > 0 && $modified < $now && $now - $modified > 2592000) {

@@ -53,9 +53,12 @@ archive_scan_dirs(function ($info) {
   echo "Checking $dir\n";
   if (is_file("$dir/testing.complete") &&
       is_file("$dir/har.complete") &&
-      is_file("$dir/archive.dat") &&
-      ArchiveExists("$dir/archive.dat")) {
-    MarkDone($dir);
+      is_file("$dir/archive.dat")) {
+    if (ArchiveExists("$dir/archive.dat") || $elapsed > 15) {
+      MarkDone($dir);
+    } else {
+      echo "  Archive not valid for $dir\n";
+    }
   } else {
     if (!is_file("$dir/testing.complete"))
       echo "  Missing $dir/testing.complete\n";
@@ -63,8 +66,6 @@ archive_scan_dirs(function ($info) {
       echo "  Missing $dir/har.complete\n";
     if (!is_file("$dir/archive.dat"))
       echo "  Missing $dir/archive.dat\n";
-    else if (!ArchiveExists("$dir/archive.dat"))
-      echo "  Archive not valid\n";
   }
 });
 
