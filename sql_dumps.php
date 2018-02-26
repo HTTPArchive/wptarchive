@@ -61,9 +61,9 @@ foreach($downloads as $filename => &$download){
     }
   }
   if ($download['verified'] && is_file("$baseDir/$filename")) {
-    // only delete the local copy after 3 months
+    // only delete the local copy after 1 month
     $modified = filemtime("$baseDir/$filename");
-    if (!$modified || ($modified < $now && $now - $modified > 7776000)) {
+    if (!$modified || ($modified < $now && $now - $modified > 2592000)) {
       echo "$filename is in archive, deleting...\n";
       unlink("$baseDir/$filename");
     }
