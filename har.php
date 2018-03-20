@@ -236,7 +236,7 @@ function CollectTraces($tests, $outDir) {
 function gsUpload($dir, $crawlName) {
   $ret = false;
   logMessage("Uploading $dir to gs://httparchive/$crawlName");
-  exec("/home/httparchive/gsutil/gsutil -m cp -r -n \"$dir\" gs://httparchive/", $output, $result);
+  exec("/home/httparchive/google-cloud-sdk/bin/gsutil -m cp -r -n \"$dir\" gs://httparchive/", $output, $result);
   if ($result == 0) {
     $ret = true;
     logMessage("Upload Complete");
@@ -249,7 +249,7 @@ function gsUpload($dir, $crawlName) {
 function gsMarkDone($crawlName) {
   $ret = false;
   $doneFile = realpath(__DIR__ . '/done.txt');
-  exec("/home/httparchive/gsutil/gsutil -q cp \"$doneFile\" gs://httparchive/$crawlName/done", $output, $result);
+  exec("/home/httparchive/google-cloud-sdk/bin/gsutil -q cp \"$doneFile\" gs://httparchive/$crawlName/done", $output, $result);
   if ($result == 0)
     $ret = true;
   return $ret;
