@@ -1,6 +1,8 @@
 <?php
 include './archive_common.php.inc';
-require_once('har.inc.php');
+require_once('./include/TestInfo.php');
+require_once('./include/TestResults.php');
+require_once('./har/HttpArchiveGenerator.php');
 
 // Allow for multiple concurrent scans to run
 $max_concurrent = 2;
@@ -173,7 +175,12 @@ function CollectHARs($tests, $outDir) {
     $index++;
     logMessage("[$index/$total] Collecting HAR ($id)...");
     $testPath = './' . GetTestPath($id);
-    $har = GenerateHAR($id, $testPath, ['bodies' => 1, 'run' => 'median', 'cached' => 0]);
+    $testInfo = TestInfo::fromFiles($testPath, false);
+    $testResults = TestResults::fromFiles($testInfo);
+    $run = $testResults->getMedianRunNumber("SpeedIndex", 0);
+    $options = array('bodies' => 1, 'run' => $run, 'cached' => 0);
+    $archiveGenerator = new HttpArchiveGenerator($testInfo, $options);
+    $har = $archiveGenerator->generate();
     if (isset($har) && strlen($har) > 10) {
       $harFile = "$outDir/$id.har";
       file_put_contents($harFile, $har);
