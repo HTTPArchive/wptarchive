@@ -20,12 +20,11 @@ archive_scan_dirs(function ($info) {
   $dir = $info['dir'];
   $id = $info['id'];
   
-  // Only look at tests that were started at least 1 day ago (eliminates any possible race conditions)
-  $date = DateTime::createFromFormat('ymd', "{$info['year']}{$info['month']}{$info['day']}", $UTC);
-  $daytime = $date->getTimestamp();
-  $elapsed = max($now - $daytime, 0) / 86400;
+  // Only look at tests that were started at least 1 hour ago (eliminates any possible race conditions)
+  $created = stat($dir);
+  $elapsed_hours = max($now - $stat['ctime'], 0) / 3600;
   
-  if ($elapsed >= 1 && !is_file("$dir/testing.complete")) {
+  if ($elapsed_hours >= 1 && !is_file("$dir/testing.complete")) {
     if (!$checkedCrawl) {
       $checkedCrawl = UpdateCrawlState();
     }
@@ -49,7 +48,7 @@ archive_scan_dirs(function ($info) {
     }
   }
   
-  // See if all of the individual processing steps are done.  If so, mark mrocessing as complete.
+  // See if all of the individual processing steps are done.  If so, mark processing as complete.
   echo "Checking $dir\n";
   if (is_file("$dir/testing.complete") &&
       is_file("$dir/har.complete") &&
