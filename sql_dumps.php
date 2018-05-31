@@ -1,6 +1,5 @@
 <?php
 include './archive_common.php.inc';
-require_once('har.inc.php');
 
 $now = time();
 
@@ -50,7 +49,7 @@ if ($updated) {
 
 $updated = false;
 foreach($downloads as $filename => &$download){
-  if (!$download['verified']) {
+  if (is_file("$baseDir/$filename") && !$download['verified']) {
     echo "$filename - Checking {$download['url']}...";
     if (URLExists($download['url'])) {
       echo "exists\n";
