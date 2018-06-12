@@ -1,5 +1,5 @@
 <?php
-include './archive_common.php.inc';
+require_once(__DIR__ . '/archive_common.php.inc');
 
 // Allow for multiple concurrent scans to run
 $max_concurrent = 3;

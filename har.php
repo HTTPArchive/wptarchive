@@ -186,18 +186,10 @@ function CollectHARs($tests, $outDir) {
       file_put_contents($harFile, $har);
       $size = filesize($harFile);
       logMessage("[$index/$total] Compressing $harFile ($size bytes)");
-      exec("gzip -7 \"$harFile\"");
+      exec("gzip -5 \"$harFile\"");
       $harFile .= '.gz';
       if (is_file($harFile)) {
-        $size = filesize($harFile);
-        logMessage("[$index/$total] Validating $harFile ($size bytes)");
-        exec("gzip -t \"$harFile\"", $out, $return);
-        if (!$return) {
-          $count++;
-        } else {
-          logMessage("Invalid gzip file: $return");
-          @unlink($harFile);
-        }
+        $count++;
       }
     }
   }
@@ -236,7 +228,7 @@ function CollectTraces($tests, $outDir) {
 function gsUpload($dir, $crawlName) {
   $ret = false;
   logMessage("Uploading $dir to gs://httparchive/$crawlName");
-  exec("/home/httparchive/google-cloud-sdk/bin/gsutil -m cp -r -n \"$dir\" gs://httparchive/", $output, $result);
+  exec("gsutil -m cp -r -n \"$dir\" gs://httparchive/", $output, $result);
   if ($result == 0) {
     $ret = true;
     logMessage("Upload Complete");
@@ -249,7 +241,7 @@ function gsUpload($dir, $crawlName) {
 function gsMarkDone($crawlName) {
   $ret = false;
   $doneFile = realpath(__DIR__ . '/done.txt');
-  exec("/home/httparchive/google-cloud-sdk/bin/gsutil -q cp \"$doneFile\" gs://httparchive/$crawlName/done", $output, $result);
+  exec("gsutil -q cp \"$doneFile\" gs://httparchive/$crawlName/done", $output, $result);
   if ($result == 0)
     $ret = true;
   return $ret;

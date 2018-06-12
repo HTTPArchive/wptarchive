@@ -1,5 +1,5 @@
 <?php
-include './settings.inc.php';
+require_once(__DIR__ . '/settings.inc.php');
 if (!isset($wpt_dir)) {
   echo "$wpt_dir missing from settings.inc.php";
   exit(1);

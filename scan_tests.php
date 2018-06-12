@@ -8,7 +8,7 @@ $now = time();
 $crawls = array();
 $pendingTests = array();
 $finishedTests = array();
-$checkedCrawl = false;
+$checkedCrawl = UpdateCrawlState();
 
 /**
 * Loop through all of the test directories checking on the status of the
@@ -90,14 +90,14 @@ function UpdateCrawlState() {
 
   echo "Updating crawl status...\n";
   
-  $db = mysql_connect($gMysqlServer, $gMysqlUsername, $gMysqlPassword);
-  if (mysql_select_db($gMysqlDb)) {
+  $db = mysqli_connect($gMysqlServer, $gMysqlUsername, $gMysqlPassword);
+  if (mysqli_select_db($db, $gMysqlDb)) {
     // Get the status of all of the tests in all of the crawls
     foreach ($statusTables as $table) {
-      $result = mysql_query("SELECT wptid,status,crawlid FROM $table;", $db);
+      $result = mysqli_query($db, "SELECT wptid,status,crawlid FROM $table;");
       if ($result !== false) {
         $ret = true;
-        while ($row = mysql_fetch_assoc($result)) {
+        while ($row = mysqli_fetch_assoc($result)) {
           $id = $row['wptid'];
           $status = $row['status'];
           $crawl = $row['crawlid'];
@@ -127,9 +127,9 @@ function UpdateCrawlState() {
     // Get the descriptions for all of the crawls
     if (count($crawls)) {
       foreach($crawls as $crawl => &$crawl_data) {
-        $result = mysql_query("SELECT label,location,finishedDateTime FROM crawls WHERE crawlid=$crawl;", $db);
+        $result = mysqli_query($db, "SELECT label,location,finishedDateTime FROM crawls WHERE crawlid=$crawl;");
         if ($result !== false) {
-          if ($row = mysql_fetch_assoc($result)) {
+          if ($row = mysqli_fetch_assoc($result)) {
             $type = $row['location'];
             if ($type == 'IE8')
               $type = 'IE';
@@ -146,7 +146,7 @@ function UpdateCrawlState() {
         echo "\n";
       }
     }
-    mysql_close($db);
+    mysqli_close($db);
   }
   ksort($pendingTests);
 
