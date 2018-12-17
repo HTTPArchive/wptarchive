@@ -20,11 +20,11 @@ archive_scan_dirs(function ($info) {
   $dir = $info['dir'];
   $id = $info['id'];
   
-  // Only look at tests that were started at least 1 hour ago (eliminates any possible race conditions)
+  // Only look at tests that were started at least 4 hours ago (eliminates any possible race conditions)
   $created = stat($dir);
-  $elapsed_hours = max($now - $stat['ctime'], 0) / 3600;
+  $elapsed_hours = max($now - $created['ctime'] , 0) / 3600;
   
-  if ($elapsed_hours >= 1 && !is_file("$dir/testing.complete")) {
+  if ($elapsed_hours >= 4 && !is_file("$dir/testing.complete")) {
     if (!$checkedCrawl) {
       $checkedCrawl = UpdateCrawlState();
     }
@@ -53,18 +53,23 @@ archive_scan_dirs(function ($info) {
   if (is_file("$dir/testing.complete") &&
       is_file("$dir/har.complete") &&
       is_file("$dir/archive.dat")) {
-    if (ArchiveExists("$dir/archive.dat") || $elapsed > 15) {
+    $archive_elapsed = max($now - filemtime("$dir/archive.dat"), 0) / 3600;
+    if (ArchiveExists("$dir/archive.dat") || $archive_elapsed > 24) {
       MarkDone($dir);
     } else {
       echo "  Archive not valid for $dir\n";
     }
   } else {
-    if (!is_file("$dir/testing.complete"))
-      echo "  Missing $dir/testing.complete\n";
-    if (!is_file("$dir/har.complete"))
-      echo "  Missing $dir/har.complete\n";
-    if (!is_file("$dir/archive.dat"))
-      echo "  Missing $dir/archive.dat\n";
+    if ($elapsed_hours < 4) {
+      echo "  Too recent, skipping\n";
+    } else {
+      if (!is_file("$dir/testing.complete"))
+        echo "  Missing $dir/testing.complete\n";
+      if (!is_file("$dir/har.complete"))
+        echo "  Missing $dir/har.complete\n";
+      if (!is_file("$dir/archive.dat"))
+        echo "  Missing $dir/archive.dat\n";
+    }
   }
 });
 
@@ -101,7 +106,7 @@ function UpdateCrawlState() {
           $id = $row['wptid'];
           $status = $row['status'];
           $crawl = $row['crawlid'];
-          if (preg_match('/^([A-Z0-9]+_[A-Z0-9]+)_[A-Z0-9]+$/', $id, $matches)) {
+          if (preg_match('/^([A-Z0-9]+_[a-zA-Z0-9]+)_[A-Z0-9]+$/', $id, $matches)) {
             $group = $matches[1];
             if ($status < 4) {
               if (!isset($pendingTests[$group]))
