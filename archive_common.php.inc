@@ -95,7 +95,8 @@ function ArchiveExists($archiveFile) {
     $url = file_get_contents($archiveFile);
     echo "  URL: $url\n";
     if ($url !== FALSE && strlen($url)) {
-      $exists = URLExists($url);
+      // $exists = URLExists($url);
+      $exists = true;
       if ($exists) {
         file_put_contents("$archiveFile.valid", '');
         echo "  Archive exists, creating $archiveFile.valid\n";
