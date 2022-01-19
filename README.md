@@ -1,10 +1,9 @@
 # wptarchive
 This is the (new) archiving logic for the main HTTP Archive instance that:
-* Zips the individual tests and stores them in the Internet Archive storage
+* Zips the individual tests and stores them in the Google cloud storage bucket
 * Extracts HAR files (with bodies) for all of the tests
-  * Uploads the extracted HARs to Internet Archive for bulk download
   * Uploads the extracted HARs to Google storage for data flow processing/Big Query access
-* Uploads the SQL dump files to Internet Archive storage
+* Uploads the SQL dump files to Google cloud storage
 * Deletes local test data that has already been processed and archived and have not been accessed recently
 
 
