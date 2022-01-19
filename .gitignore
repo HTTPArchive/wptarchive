@@ -2,3 +2,5 @@
 /harupload.php
 /settings.inc.php
 /done.txt
+*.log
+/crawls.json
