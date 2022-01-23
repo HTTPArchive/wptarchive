@@ -19,6 +19,7 @@ function checkDone() {
     $result = mysqli_query($db, "select * from crawls where finishedDateTime is NULL;");
     if ($result !== false) {
       $rowcount = mysqli_num_rows($result);
+      echo "$rowcount crawl(s) still running.\n";
       if ($rowcount == 0) {
         $crawls_file = __DIR__ . '/crawls.json';
         if (file_exists($crawls_file)) {
