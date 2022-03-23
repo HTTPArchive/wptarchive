@@ -76,7 +76,7 @@ function ZipDirectory($dir, $zipFile, $store_only = false) {
     $cwd = getcwd();
     chdir($dir);
     $options = $store_only ? '-r0' : '-r7';
-    exec("zip $options \"$zipFile\" *");
+    exec("zip $options \"$zipFile\" * -x '1_har.json.gz'");
     chdir($cwd);
   }
   return $ret;

@@ -141,31 +141,37 @@ function CollectHARs($tests, $outDir) {
     $index++;
     $ok = false;
     try {
-      logMessage("[$index/$total] Collecting HAR ($id)...");
+      //logMessage("[$index/$total] Collecting HAR ($id)...");
+      $start = microtime(true);
       $testPath = './' . GetTestPath($id);
-      $testInfo = TestInfo::fromFiles($testPath, false);
-      if (isset($testInfo)) {
-        $testResults = TestResults::fromFiles($testInfo);
-        if (isset($testResults)) {
-          $runResult = $testResults->getRunResult(1, false);
-          if (isset($runResult)) {
-            $raw = $runResult->getStepResult(1)->getRawResults();
-            if (isset($raw)) {
-              $run = $testResults->getMedianRunNumber("SpeedIndex", 0);
-              $options = array('bodies' => 1, 'run' => $run, 'cached' => 0);
-              $archiveGenerator = new HttpArchiveGenerator($testInfo, $options);
-              $har = $archiveGenerator->generate();
-              if (isset($har) && strlen($har) > 10) {
-                $harFile = "$outDir/$id.har";
-                file_put_contents($harFile, $har);
-                $size = filesize($harFile);
-                logMessage("[$index/$total] Compressing $harFile ($size bytes)");
-                exec("gzip -5 \"$harFile\"");
-                $harFile .= '.gz';
-                if (is_file($harFile)) {
-                  $ok = true;
-                  $count++;
-                }
+      $harFile = "$outDir/$id.har.gz";
+      if (is_file("$testPath/1_har.json.gz")) {
+        if (copy("$testPath/1_har.json.gz", $harFile)) {
+          $size = filesize($harFile);
+          $elapsed = microtime(true) - $start;
+          logMessage("[$index/$total] $id ($size bytes) - $elapsed sec");
+          if (is_file($harFile)) {
+            $ok = true;
+            $count++;
+          }
+        }
+      } else {
+        $testInfo = TestInfo::fromFiles($testPath, false);
+        if (isset($testInfo)) {
+          $options = array('bodies' => 1, 'run' => 1, 'cached' => 0, 'lighthouse' => 1);
+          $archiveGenerator = new HttpArchiveGenerator($testInfo, $options);
+          $har = $archiveGenerator->generate();
+          if (isset($har) && strlen($har) > 10) {
+            $gz = gzopen($harFile, 'w1');
+            if ($gz) {
+              gzwrite($gz, $har);
+              gzclose($gz);
+              $size = filesize($harFile);
+              $elapsed = microtime(true) - $start;
+              logMessage("[$index/$total] $id ($size bytes) - $elapsed sec");
+              if (is_file($harFile)) {
+                $ok = true;
+                $count++;
               }
             }
           }

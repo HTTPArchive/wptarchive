@@ -87,7 +87,6 @@ function UpdateCrawlState() {
               $files = array('1_debug.log', '1_devtools.json.gz', '1_trace.json.gz', '1_netlog_requests.json.gz');
               foreach ($files as $file) {
                 if (file_exists("$test_path/$file")) {
-                  echo "Removing $test_path/$file";
                   unlink("$test_path/$file");
                 }
               }
