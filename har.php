@@ -192,8 +192,8 @@ function gsUpload($dir, $crawlName) {
   $ret = false;
   $cwd = getcwd();
   chdir($dir);
-  logMessage("Uploading $dir to gs://httparchive/$crawlName");
-  exec("gsutil -m cp -r -n . gs://httparchive/$crawlName/", $output, $result);
+  logMessage("Uploading $dir to gs://httparchive/crawls/$crawlName");
+  exec("gsutil -m cp -r -n . gs://httparchive/crawls/$crawlName/", $output, $result);
   if ($result == 0) {
     $ret = true;
     logMessage("Upload Complete");
@@ -207,7 +207,7 @@ function gsUpload($dir, $crawlName) {
 function gsMarkDone($crawlName) {
   $ret = false;
   $doneFile = realpath(__DIR__ . '/done.txt');
-  exec("gsutil -q cp \"$doneFile\" gs://httparchive/$crawlName/done", $output, $result);
+  exec("gsutil -q cp \"$doneFile\" gs://httparchive/crawls/$crawlName/done", $output, $result);
   if ($result == 0)
     $ret = true;
   return $ret;
